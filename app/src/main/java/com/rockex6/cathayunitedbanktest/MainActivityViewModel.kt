@@ -9,7 +9,6 @@ import com.rockex6.cathayunitedbanktest.network.util.ApiResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
@@ -22,8 +21,8 @@ class MainActivityViewModel(private val mainActivityRepository: MainActivityRepo
     val allStockList = _allStockList.asStateFlow()
 
     private val _allStockDetailList = MutableStateFlow<List<StockDetailInfo>>(emptyList())
-    private val _stockDetailData = MutableSharedFlow<StockDetailInfo?>()
-    val stockDetailData = _stockDetailData.asSharedFlow()
+
+    val stockDetailData = MutableSharedFlow<String>()
 
     // 載入狀態管理
     private val _isLoading = MutableStateFlow(false)
@@ -67,7 +66,9 @@ class MainActivityViewModel(private val mainActivityRepository: MainActivityRepo
 
     fun getStockDetail(stockCode: String) = viewModelScope.launch(Dispatchers.IO) {
         if (_allStockDetailList.value.isNotEmpty()) {
-            _stockDetailData.emit(_allStockDetailList.value.find { it.code == stockCode } )
+            val message =
+                buildAlertDialogMessage(_allStockDetailList.value.find { it.code == stockCode })
+            stockDetailData.emit(message)
             return@launch
         }
 
@@ -76,7 +77,8 @@ class MainActivityViewModel(private val mainActivityRepository: MainActivityRepo
                 is ApiResult.Success -> {
                     val stockDetail = it.data.find { stock -> stock.code == stockCode }
                     _allStockDetailList.value = it.data
-                    _stockDetailData.emit(stockDetail)
+                    val message = buildAlertDialogMessage(stockDetail)
+                    stockDetailData.emit(message)
                 }
 
                 is ApiResult.Failure -> {
@@ -84,6 +86,18 @@ class MainActivityViewModel(private val mainActivityRepository: MainActivityRepo
                 }
             }
         }
+    }
+
+    private fun buildAlertDialogMessage(stockDetailInfo: StockDetailInfo?): String {
+        return stockDetailInfo?.let { stock ->
+            buildString {
+                append("股票代號：${stock.code}\n")
+                append("股票名稱：${stock.name}\n\n")
+                append("本益比：${stock.peRatio}\n")
+                append("殖利率：${stock.dividendYield}\n")
+                append("股價淨值比：${stock.pbRatio}\n")
+            }
+        } ?: ""
     }
 
     fun changeSort(sort: SortedEnum) {

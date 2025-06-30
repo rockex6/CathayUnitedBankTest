@@ -46,15 +46,15 @@ class StockListAdapter(private val itemClickCallback: (String) -> Unit) :
                 tvMonthlyAvgPrice.text = stock.monthlyAveragePrice
 
                 if (stock.openingPrice > stock.monthlyAveragePrice) {
-                    tvOpenPrice.setTextColor(ColorStateList.valueOf(itemView.context.getColor(R.color.green)))
-                } else {
                     tvOpenPrice.setTextColor(ColorStateList.valueOf(itemView.context.getColor(R.color.red)))
+                } else {
+                    tvOpenPrice.setTextColor(ColorStateList.valueOf(itemView.context.getColor(R.color.green)))
                 }
 
                 if (stock.closingPrice > stock.monthlyAveragePrice) {
-                    tvClosePrice.setTextColor(ColorStateList.valueOf(itemView.context.getColor(R.color.green)))
-                } else {
                     tvClosePrice.setTextColor(ColorStateList.valueOf(itemView.context.getColor(R.color.red)))
+                } else {
+                    tvClosePrice.setTextColor(ColorStateList.valueOf(itemView.context.getColor(R.color.green)))
                 }
 
                 if (stock.change.startsWith("-")) {

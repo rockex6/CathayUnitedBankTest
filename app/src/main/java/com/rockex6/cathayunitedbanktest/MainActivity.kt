@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rockex6.cathayunitedbanktest.databinding.ActivityMainBinding
-import com.rockex6.cathayunitedbanktest.model.StockDetailInfo
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -83,15 +82,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            viewModel.stockDetailData.collect { stockDetail ->
-                showStockDetailDialog(stockDetail)
+            viewModel.stockDetailData.collect { message ->
+                showStockDetailDialog(message)
             }
         }
     }
 
     private fun initListener() {
         binding.ivMenu.setOnClickListener {
-            val bottomSheet = BottomSheet { sortEnum ->
+            val bottomSheet = BottomSheet.newInstance { sortEnum ->
                 // 在排序前記錄當前的 scroll 位置
                 saveCurrentScrollPosition()
                 // 執行排序
@@ -106,24 +105,15 @@ class MainActivity : AppCompatActivity() {
         savedScrollPosition = layoutManager?.findFirstVisibleItemPosition() ?: 0
     }
 
-    private fun showStockDetailDialog(stockData: StockDetailInfo?) {
-        stockData?.let { stock ->
-            val message = buildString {
-                append("股票代號：${stock.code}\n")
-                append("股票名稱：${stock.name}\n\n")
-                append("本益比：${stock.peRatio}\n")
-                append("殖利率：${stock.dividendYield}\n")
-                append("股價淨值比：${stock.pbRatio}\n")
+    private fun showStockDetailDialog(message: String) {
+        if (message.isEmpty()) return
+        AlertDialog.Builder(this)
+            .setTitle("股票詳細資訊")
+            .setMessage(message)
+            .setPositiveButton("確定") { dialog, _ ->
+                dialog.dismiss()
             }
-
-            AlertDialog.Builder(this)
-                .setTitle("股票詳細資訊")
-                .setMessage(message)
-                .setPositiveButton("確定") { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .show()
-        }
+            .show()
     }
 
     override fun onDestroy() {
