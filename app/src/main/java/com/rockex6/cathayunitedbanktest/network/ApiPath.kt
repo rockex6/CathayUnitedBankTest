@@ -1,4 +1,4 @@
-package com.rockex6.cathayunitedbanktest
+package com.rockex6.cathayunitedbanktest.network
 
 object ApiPath {
     const val ALL_STOCK = "exchangeReport/BWIBBU_ALL"

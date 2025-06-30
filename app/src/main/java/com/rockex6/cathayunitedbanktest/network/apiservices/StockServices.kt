@@ -1,6 +1,6 @@
 package com.rockex6.cathayunitedbanktest.network.apiservices
 
-import com.rockex6.cathayunitedbanktest.ApiPath
+import com.rockex6.cathayunitedbanktest.network.ApiPath
 import com.rockex6.cathayunitedbanktest.model.StockBasicInfo
 import com.rockex6.cathayunitedbanktest.model.StockDayAverage
 import com.rockex6.cathayunitedbanktest.model.StockTrading

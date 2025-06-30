@@ -25,11 +25,12 @@ class MainActivityRepository(
     }
 
     fun getAllDayAverage() = flow {
-        val stockList = stockServices.getAllDayAverage()
-        if (stockList.isSuccessful) {
-            emit(ApiResult.Success(stockList))
+        val response = stockServices.getAllDayAverage()
+        if (response.isSuccessful) {
+            val stockData = response.body()!!
+            emit(ApiResult.Success(stockData))
         } else {
-            stockList.errorBody()?.let {
+            response.errorBody()?.let {
                 emit(ApiResult.Failure(it.toString()))
             }
         }

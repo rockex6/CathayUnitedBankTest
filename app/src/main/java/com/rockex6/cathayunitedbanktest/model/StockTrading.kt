@@ -16,5 +16,7 @@ data class StockTrading(
     @SerializedName("LowestPrice") val lowestPrice: String,    // 最低價
     @SerializedName("ClosingPrice") val closingPrice: String,   // 收盤價
     @SerializedName("Change") val change: String,         // 漲跌價差
-    @SerializedName("Transaction") val transaction: String     // 成交筆數
+    @SerializedName("Transaction") val transaction: String,    // 成交筆數
+
+    var monthlyAveragePrice: String = "" // 月平均
 )

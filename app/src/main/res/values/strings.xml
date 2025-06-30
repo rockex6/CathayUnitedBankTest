@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">CathayUnitedBankTest</string>
+    <string name="sort_asc">依股票代號升序</string>
+    <string name="sort_desc">依股票代號降序</string>
 </resources>
