@@ -1,5 +1,6 @@
 package com.rockex6.cathayunitedbanktest
 
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -8,7 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.rockex6.cathayunitedbanktest.databinding.ItemStockBinding
 import com.rockex6.cathayunitedbanktest.model.StockTrading
 
-class StockListAdapter: ListAdapter<StockTrading, StockListAdapter.StockViewHolder>(StockDiffCallback()) {
+class StockListAdapter(private val itemClickCallback: (String) -> Unit) :
+    ListAdapter<StockTrading, StockListAdapter.StockViewHolder>(StockDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StockViewHolder {
         val binding = ItemStockBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -20,8 +22,8 @@ class StockListAdapter: ListAdapter<StockTrading, StockListAdapter.StockViewHold
     }
 
 
-
-    class StockViewHolder(private val binding: ItemStockBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class StockViewHolder(private val binding: ItemStockBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
         fun bind(stock: StockTrading) {
             with(binding) {
@@ -42,6 +44,27 @@ class StockListAdapter: ListAdapter<StockTrading, StockListAdapter.StockViewHold
                 tvTradeValue.text = stock.tradeValue
 
                 tvMonthlyAvgPrice.text = stock.monthlyAveragePrice
+
+                if (stock.openingPrice > stock.monthlyAveragePrice) {
+                    tvOpenPrice.setTextColor(ColorStateList.valueOf(itemView.context.getColor(R.color.green)))
+                } else {
+                    tvOpenPrice.setTextColor(ColorStateList.valueOf(itemView.context.getColor(R.color.red)))
+                }
+
+                if (stock.closingPrice > stock.monthlyAveragePrice) {
+                    tvClosePrice.setTextColor(ColorStateList.valueOf(itemView.context.getColor(R.color.green)))
+                } else {
+                    tvClosePrice.setTextColor(ColorStateList.valueOf(itemView.context.getColor(R.color.red)))
+                }
+
+                if (stock.change.startsWith("-")) {
+                    tvPriceChange.setTextColor(ColorStateList.valueOf(itemView.context.getColor(R.color.green)))
+                } else {
+                    tvPriceChange.setTextColor(ColorStateList.valueOf(itemView.context.getColor(R.color.red)))
+                }
+                itemView.setOnClickListener {
+                    itemClickCallback.invoke(stock.code)
+                }
             }
         }
     }

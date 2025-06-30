@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.flowOn
 class MainActivityRepository(
     val stockServices: StockServices
 ) {
-    fun getAllStock() = flow {
-        val response = stockServices.getAllStock()
+    fun getStockDetail() = flow {
+        val response = stockServices.getStockDetail()
         if (response.isSuccessful) {
             val stockList = response.body()!!
             emit(ApiResult.Success(stockList))

@@ -1,5 +1,6 @@
 package com.rockex6.cathayunitedbanktest
 
+import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -7,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rockex6.cathayunitedbanktest.databinding.ActivityMainBinding
+import com.rockex6.cathayunitedbanktest.model.StockDetailInfo
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -37,7 +39,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initList() {
-        stockAdapter = StockListAdapter()
+        stockAdapter = StockListAdapter { code ->
+            viewModel.getStockDetail(code)
+        }
+
         binding.rvStock.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = stockAdapter
@@ -76,6 +81,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        lifecycleScope.launch {
+            viewModel.stockDetailData.collect { stockDetail ->
+                showStockDetailDialog(stockDetail)
+            }
+        }
     }
 
     private fun initListener() {
@@ -93,6 +104,26 @@ class MainActivity : AppCompatActivity() {
     private fun saveCurrentScrollPosition() {
         val layoutManager = binding.rvStock.layoutManager as? LinearLayoutManager
         savedScrollPosition = layoutManager?.findFirstVisibleItemPosition() ?: 0
+    }
+
+    private fun showStockDetailDialog(stockData: StockDetailInfo?) {
+        stockData?.let { stock ->
+            val message = buildString {
+                append("股票代號：${stock.code}\n")
+                append("股票名稱：${stock.name}\n\n")
+                append("本益比：${stock.peRatio}\n")
+                append("殖利率：${stock.dividendYield}\n")
+                append("股價淨值比：${stock.pbRatio}\n")
+            }
+
+            AlertDialog.Builder(this)
+                .setTitle("股票詳細資訊")
+                .setMessage(message)
+                .setPositiveButton("確定") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
+        }
     }
 
     override fun onDestroy() {

@@ -3,10 +3,13 @@ package com.rockex6.cathayunitedbanktest
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rockex6.cathayunitedbanktest.model.StockDetailInfo
 import com.rockex6.cathayunitedbanktest.model.StockTrading
 import com.rockex6.cathayunitedbanktest.network.util.ApiResult
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
@@ -17,6 +20,10 @@ class MainActivityViewModel(private val mainActivityRepository: MainActivityRepo
 
     private val _allStockList = MutableStateFlow<List<StockTrading>>(emptyList())
     val allStockList = _allStockList.asStateFlow()
+
+    private val _allStockDetailList = MutableStateFlow<List<StockDetailInfo>>(emptyList())
+    private val _stockDetailData = MutableSharedFlow<StockDetailInfo?>()
+    val stockDetailData = _stockDetailData.asSharedFlow()
 
     // 載入狀態管理
     private val _isLoading = MutableStateFlow(false)
@@ -45,6 +52,7 @@ class MainActivityViewModel(private val mainActivityRepository: MainActivityRepo
                         val sortedList = stockList.sortedByDescending { it.code }
                         _allStockList.value = sortedList
                     }
+
                     else -> {
                         // 處理錯誤情況
                         Log.e("MainActivityViewModel", "載入股票資料失敗")
@@ -57,11 +65,33 @@ class MainActivityViewModel(private val mainActivityRepository: MainActivityRepo
         }
     }
 
+    fun getStockDetail(stockCode: String) = viewModelScope.launch(Dispatchers.IO) {
+        if (_allStockDetailList.value.isNotEmpty()) {
+            _stockDetailData.emit(_allStockDetailList.value.find { it.code == stockCode } )
+            return@launch
+        }
+
+        mainActivityRepository.getStockDetail().collect {
+            when (it) {
+                is ApiResult.Success -> {
+                    val stockDetail = it.data.find { stock -> stock.code == stockCode }
+                    _allStockDetailList.value = it.data
+                    _stockDetailData.emit(stockDetail)
+                }
+
+                is ApiResult.Failure -> {
+                    // 處理錯誤情況
+                }
+            }
+        }
+    }
+
     fun changeSort(sort: SortedEnum) {
-        when(sort) {
+        when (sort) {
             SortedEnum.DESC -> {
                 _allStockList.value = _allStockList.value.sortedByDescending { it.code }
             }
+
             SortedEnum.ASC -> {
                 _allStockList.value = _allStockList.value.sortedBy { it.code }
             }
