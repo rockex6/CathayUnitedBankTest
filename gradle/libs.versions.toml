@@ -14,6 +14,9 @@ gson = "2.10.1"
 okhttp = "4.12.0"
 coroutines = "1.7.3"
 lifecycle = "2.6.2"
+lottie = "6.1.0"
+shimmer = "0.5.0"
+recyclerview-animators = "4.0.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -38,6 +41,11 @@ kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 
 # Lifecycle
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+
+# Animation libraries
+lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie" }
+shimmer = { group = "com.facebook.shimmer", name = "shimmer", version.ref = "shimmer" }
+recyclerview-animators = { group = "jp.wasabeef", name = "recyclerview-animators", version.ref = "recyclerview-animators" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

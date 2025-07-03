@@ -4,4 +4,9 @@
     <color name="white">#FFFFFFFF</color>
     <color name="green">#FF4CAF50</color>
     <color name="red">#ff0000</color>
+
+    <!-- Animation and skeleton colors -->
+    <color name="skeleton_color">#E0E0E0</color>
+    <color name="ripple_color">#20000000</color>
+    <color name="loading_background">#80000000</color>
 </resources>

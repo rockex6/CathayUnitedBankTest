@@ -60,4 +60,9 @@ dependencies {
 
     // Lifecycle
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
+
+    // Animation libraries
+    implementation(libs.lottie)
+    implementation(libs.shimmer)
+    implementation(libs.recyclerview.animators)
 }
